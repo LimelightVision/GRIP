@@ -156,6 +156,9 @@ public class CodeGenerationOptionsController {
       case PYTHON:
         loadPythonControls();
         break;
+      case LIMELIGHT:
+        loadLimelightControls();
+        break;
       default:
         throw new AssertionError(
             "Unknown language: " + languageSelector.getSelectionModel().getSelectedItem());
@@ -176,6 +179,13 @@ public class CodeGenerationOptionsController {
    * Loads C++ specific controls into the pane.
    */
   private void loadCppControls() {
+    extrasPane.setVisible(false);
+  }
+
+  /**
+   * Loads Limelight specific controls into the pane.
+   */
+  private void loadLimelightControls() {
     extrasPane.setVisible(false);
   }
 

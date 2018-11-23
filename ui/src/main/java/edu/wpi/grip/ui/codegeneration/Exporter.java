@@ -75,6 +75,8 @@ public class Exporter implements Runnable {
         // Fall through to default
       case CPP:
         // Fall through to default
+      case LIMELIGHT:
+        // Fall through to default
       default:
         // default to having the class name be the file name
         saveFile = new File(dir, settings.getClassName() + "." + lang.extension);

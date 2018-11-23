@@ -8,7 +8,8 @@ public enum Language {
 
   JAVA("Java", "java", "java"),
   CPP("C++", "cpp", "cpp"),
-  PYTHON("Python", "py", "python");
+  PYTHON("Python", "py", "python"),
+  LIMELIGHT("Limelight", "ll", "limelight");
 
   public final String name;
   public final String extension;
@@ -35,6 +36,8 @@ public enum Language {
       return CPP;
     } else if (name.equals(PYTHON.name)) {
       return PYTHON;
+    } else if (name.equals(LIMELIGHT.name)) {
+      return LIMELIGHT;
     } else {
       throw new IllegalArgumentException(name + " is not a valid name");
     }

@@ -1,0 +1,35 @@
+//
+// Inputs
+//
+Inputs
+{
+#foreach($source in $pipeline.getSources())
+	#cType($source.type()) $source.value();
+#end
+}
+
+//
+// Variables
+//
+Outputs
+{
+#foreach($step in $pipeline.getSteps())
+#foreach($output in $step.getOutputs())
+	#cType($output.type()) $tMeth.name($output.name());
+#end
+#end
+}
+
+//
+// Steps
+//
+
+#foreach($step in $pipeline.getSteps())
+Step $step.name()$step.num()
+{
+#parse("$vmLoc/Step.vm")
+}
+
+#end
+
+

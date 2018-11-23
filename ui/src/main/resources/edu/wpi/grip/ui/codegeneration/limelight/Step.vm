@@ -1,0 +1,5 @@
+#foreach($input in $step.getInputs())
+#newInput($input)
+#end
+
+    $tMeth.callOp($step);

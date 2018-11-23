@@ -1,0 +1,101 @@
+#macro(cType $type)#if($type.equals("Object"))
+void#elseif($type.equalsIgnoreCase("Number"))
+Double#elseif($type.equalsIgnoreCase("BlurType"))
+BlurType#elseif($type.equalsIgnoreCase("List"))
+List#elseif($type.equalsIgnoreCase("LineTypesEnumCoreEnum"))
+LineType#elseif($type.equalsIgnoreCase("BorderTypesEnumCoreEnum"))
+BorderType#elseif($type.equalsIgnoreCase("CVBorderTypesEnumCoreEnum"))
+BorderType#elseif($type.equalsIgnoreCase("CVThresholdTypesEnum"))
+ThresholdType#elseif($type.equalsIgnoreCase("CVAdaptThresholdTypesEnum"))
+ThresholdType#elseif($type.equalsIgnoreCase("ColorConversionCodesEnum"))
+ColorConversionType#elseif($type.equalsIgnoreCase("CmpTypesEnumCoreEnum"))
+CmpType#elseif($type.equalsIgnoreCase("ColormapTypesEnum"))
+ColormapType#elseif($type.equalsIgnoreCase("Distance_TransformType"))
+DistanceTransformType#elseif($type.equalsIgnoreCase("AdaptiveThresholdTypesEnum"))
+AdaptiveThresholdType#elseif($type.equalsIgnoreCase("Interpolation"))
+InterpolationType#else$type#end#end
+
+#macro(funPassType $baseType)
+#set($type = "#cType($baseType)")
+#if($type.equals("double") || $type.equals("int") || $type.equals("bool") || $type.equals("std::string"))
+#else
+&#end#end
+
+#macro(setter $source)
+set$source.value()(#cType($source.type()) #funPassType($source.type())$source.value())#end
+
+#macro(param $inp $name)
+#set($type = "#cType($inp.type())")
+#if($type.equalsIgnoreCase("list"))
+double ${name}[]#else
+$type #funPassType($inp.type())$name;#end#end
+
+#macro(func $step $names)
+#set($name = $tMeth.name($step.name()))
+#set($count = 0)
+#if($name.toLowerCase().contains("switch"))
+pipeline$name(bool sw, T &onTrue, T &onFalse, T &output)#elseif($name.toLowerCase().contains("valve"))
+pipeline$name(bool sw, T &input, T &output)#else
+$name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count = $count + 1), #end#if($name.equalsIgnoreCase("ThresholdMoving"))cv::Mat &lastImage, #end#foreach($out in $step.getOutputs())#cType($out.type()) &$names[$count]#set($count = $count + 1)#if($velocityCount <$step.getOutputs().size()), #end#end)#end#end
+
+#macro(headerFunc $step)
+#set($numVars = $step.getInputs().size() + $step.getOutputs().size())
+#set($varArray = [])
+#foreach($i in [0 .. $numVars])
+#set($randomBoolWeDoNotCareAbout = $varArray.add(""))
+#end
+#func($step $varArray)
+#end
+
+#macro (newInput $input)
+#if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
+	#cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
+#else
+#if ($input.value().equals(""))
+	#cType($input.type()) ${tMeth.name($input.name())};
+#else
+	#cType($input.type()) ${tMeth.name($input.name())} = #cvVal($input.value());
+#end
+#end#end
+
+#macro (cvVal $value)#if($value.equals("Box Blur"))
+BOX#elseif($value.equals("Gaussian Blur"))
+GAUSSIAN#elseif($value.equals("Median Filter"))
+MEDIAN#elseif($value.equals("Bilateral Filter"))
+BILATERAL#elseif($value.equals("3x3"))
+MASK_3X3#elseif($value.equals("5x5"))
+MASK_5X5#elseif($value.equals("1x1"))
+MASK_1X1#elseif($value.equals("Cubic"))
+CUBIC#elseif($value.equals("Nearest"))
+NEAREST#elseif($value.equals("Linear"))
+LINEAR#elseif($value.equals("Area"))
+AREA#elseif($value.equals("Lanczos4"))
+LANCZOS4#elseif($value.equals("Warp_Fill_Outliers"))
+WARP_FILL_OUTLIERS#elseif($value.equals("Warp_Inverse_Map"))
+WARP_INVERSE_MAP#else
+$value#end#end
+
+#macro(enumType $uniStep)
+#set($name = $tMeth.name($uniStep.name()))
+#if($uniStep.name().equalsIgnoreCase("Blur"))
+/**
+* A representation of the different types of blurs that can be used.
+*
+*/
+enum BlurType {
+	BOX, GAUSSIAN, MEDIAN, BILATERAL
+};
+#elseif($name.contains("Flip"))
+/**
+ * Code used for CV_flip. 
+ * Per OpenCV spec 0 -> flip on X axis.
+ * >0 -> flip on Y axis.
+ * <0 -> flip on both axes.
+ */
+enum FlipCode {
+	X_AXIS = 0,
+	Y_AXIS = 1,
+	BOTH_AXES = -1,
+};
+#end
+#end

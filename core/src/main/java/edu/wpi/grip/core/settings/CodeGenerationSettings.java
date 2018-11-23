@@ -145,7 +145,7 @@ public class CodeGenerationSettings {
      * Sets the language. Must be one of "Java", "C++", "Python.
      */
     public Builder language(String language) {
-      checkArgument(language.matches("Java|C\\+\\+|Python"));
+      checkArgument(language.matches("Java|C\\+\\+|Python|Limelight"));
       this.language = language;
       return this;
     }

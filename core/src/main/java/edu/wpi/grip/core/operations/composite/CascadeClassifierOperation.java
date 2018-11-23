@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Operation for identifying parts of an image with a cascade classifier.
  */
-@Description(name = "Cascade Cassifier",
+@Description(name = "Cascade Classifier",
              summary = "Runs a Haar cascade classifier on an image",
              category = OperationDescription.Category.FEATURE_DETECTION,
              iconName = "opencv")

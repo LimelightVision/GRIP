@@ -31,6 +31,8 @@ public abstract class TemplateMethods {
         return new PythonTMethods();
       case CPP:
         return new CppTMethods();
+      case LIMELIGHT:
+        return new LimelightTMethods();
       default:
         throw new IllegalArgumentException(
             lang + " is not a supported language for code generation.");
