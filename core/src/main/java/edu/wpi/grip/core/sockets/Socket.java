@@ -119,7 +119,7 @@ public interface Socket<T> {
   default String simpleString() {
     String owner;
     if (getSource().isPresent()) {
-      owner = "Source/" + getSource().get().getName();
+      owner = "Source/" + getSource().get().getName() + "SrcIndex:" + Integer.toString(getSource().get().SrcIndex);
     } else if (getStep().isPresent()) {
       owner = "Step/" + getStep().get().getOperationDescription().name();
     } else {

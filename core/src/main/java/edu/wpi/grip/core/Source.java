@@ -25,6 +25,13 @@ import java.util.logging.Logger;
  * Base class for an input into the pipeline.
  */
 public abstract class Source {
+  /**
+   * This is used to maintain the sorting order of the sources when generating code, we want the sources to
+   * be emitted in the code file in the same order they appear in the UI.  By default they were emitted in
+   * the order that they are encountered when the code generator traverses the connection in the graph.
+   */
+  public int SrcIndex;
+
   private static final Logger logger = Logger.getLogger(Source.class.getName());
   private final ExceptionWitness exceptionWitness;
 

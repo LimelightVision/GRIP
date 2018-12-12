@@ -42,6 +42,7 @@ import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.*;
 
 /**
  * Pipeline has the list of steps in a computer vision algorithm, as well as the set of connections
@@ -244,6 +245,12 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   public void onSourceAdded(SourceAddedEvent event) {
     writeSourcesSafelyConsume(sources -> {
       sources.add(event.getSource());
+
+      int i=0;
+      for (Iterator<Source> iter = sources.iterator(); iter.hasNext(); ) {
+        Source src = iter.next();
+        src.SrcIndex = i++;
+      }
     });
   }
 
@@ -251,6 +258,11 @@ public class Pipeline implements ConnectionValidator, SettingsProvider, StepInde
   public void onSourceRemoved(SourceRemovedEvent event) {
     writeSourcesSafelyConsume(sources -> {
       sources.remove(event.getSource());
+      int i=0;
+      for (Iterator<Source> iter = sources.iterator(); iter.hasNext(); ) {
+        Source src = iter.next();
+        src.SrcIndex = i++;
+      }
     });
 
     // Sockets of deleted sources should not be previewed

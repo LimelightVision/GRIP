@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
+import java.util.logging.Logger;
 
 /**
  * TPipeline(template pipeline) is a data structure
@@ -20,6 +21,8 @@ import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
  * needed by the velocity templates to generate code.
  */
 public class TPipeline {
+
+  private static final Logger logger = Logger.getLogger("TPipeline");
 
   protected List<TStep> steps;
   private int numSources;
@@ -141,8 +144,13 @@ public class TPipeline {
    * @return The generated TInput.
    */
   private TInput createInput(String type, String name, String value) {
+    logger.info("createInput: " + type + " " + name + " " + value);
     String outVal = value;
     if (value.contains("source") || value.contains("Connection")) {
+
+      logger.info("createInput - found source!: " + type + " " + name + " " + value);
+      System.out.print(value);
+
       if (uniqueSources.containsKey(value) && value.contains("Connection")) {
         outVal = "source" + uniqueSources.get(value);
       } else {

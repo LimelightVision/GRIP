@@ -55,11 +55,17 @@ public class OutputSocketImpl<T> extends SocketImpl<T> implements OutputSocket<T
 
   @Override
   public String toString() {
+    int src_index = 0;
+    if (getSource() != null)
+    {
+      src_index = getSource().get().SrcIndex;
+    }
     return MoreObjects.toStringHelper(this)
         .add("socketHint", getSocketHint())
         .add("value", getValue())
         .add("previewed", isPreviewed())
         .add("direction", getDirection())
+        .add("SrcIndex",src_index)
         .toString();
   }
 
