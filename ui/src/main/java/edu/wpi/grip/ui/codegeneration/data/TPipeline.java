@@ -6,14 +6,10 @@ import edu.wpi.grip.core.sockets.InputSocket;
 import edu.wpi.grip.core.sockets.OutputSocket;
 import edu.wpi.grip.ui.codegeneration.TemplateMethods;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static edu.wpi.grip.core.OperationDescription.Category.NETWORK;
-import java.util.logging.Logger;
 
 /**
  * TPipeline(template pipeline) is a data structure
@@ -22,10 +18,7 @@ import java.util.logging.Logger;
  */
 public class TPipeline {
 
-  private static final Logger logger = Logger.getLogger("TPipeline");
-
   protected List<TStep> steps;
-  private int numSources;
   private final Map<InputSocket, TOutput> connections;
   private final Map<String, Integer> uniqueSources;
   // keep track of how many instances of each step are in the pipeline
@@ -40,7 +33,6 @@ public class TPipeline {
   public TPipeline(List<Step> steps) {
     this.uniqueSources = new HashMap<>();
     this.steps = new ArrayList<>();
-    this.numSources = 0;
     this.connections = new HashMap<>();
     this.stepInstances = new HashMap<>();
     // Only use non-publishing steps
@@ -144,18 +136,24 @@ public class TPipeline {
    * @return The generated TInput.
    */
   private TInput createInput(String type, String name, String value) {
-    logger.info("createInput: " + type + " " + name + " " + value);
+    //System.out.println("createInput: " + type + " " + name );
     String outVal = value;
     if (value.contains("source") || value.contains("Connection")) {
 
-      logger.info("createInput - found source!: " + type + " " + name + " " + value);
-      System.out.print(value);
-
+      //System.out.println("  createInput - found source! " + value);
       if (uniqueSources.containsKey(value) && value.contains("Connection")) {
         outVal = "source" + uniqueSources.get(value);
       } else {
-        int s = numSources;
-        numSources++;
+
+        int s = 0;
+        int offset1 = value.lastIndexOf("SrcIndex=");
+        int offset2 = value.lastIndexOf('}');
+        if ((offset1 != -1) && (offset2 != -1)) {
+          String src_string = value.substring(offset1, offset2);
+          String[] substrs = src_string.split("=");
+          s = Integer.parseInt(substrs[1]);
+          //System.out.println(substrs[1]);
+        }
         uniqueSources.put(value, s);
         outVal = "source" + s;
       }
@@ -208,10 +206,13 @@ public class TPipeline {
           if (add) {
             sources.add(input);
           }
-
         }
       }
     }
+    // sort sources so they are in the correct order again
+    // the final correctly indexed name is in TInput.value
+    sources.sort(Comparator.comparing(TInput::value));
+
     return sources;
   }
 
