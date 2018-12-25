@@ -36,10 +36,12 @@ public class TPipeline {
     this.connections = new HashMap<>();
     this.stepInstances = new HashMap<>();
     // Only use non-publishing steps
-    set(steps.stream()
-        .filter(s -> !s.getOperationDescription().category().equals(NETWORK))
-        .collect(Collectors.toList())
-    );
+    //set(steps.stream()
+    //    .filter(s -> !s.getOperationDescription().category().equals(NETWORK))
+    //    .collect(Collectors.toList())
+    // );
+    // gth - allow publishing steps to get exported
+    set(steps);
   }
 
   /**
@@ -77,14 +79,14 @@ public class TPipeline {
         if (!output.getConnections().isEmpty()) {
           for (Object con : output.getConnections()) {
             Connection<?> c = (Connection<?>) con;
-            if (!c.getInputSocket()
-                .getStep()
-                .map(s -> s.getOperationDescription().category())
-                .get()
-                .equals(NETWORK)) {
+            //if (!c.getInputSocket()
+            //    .getStep()
+            //    .map(s -> s.getOperationDescription().category())
+            //    .get()
+             //   .equals(NETWORK)) {
               // Only add the connection if it's not to a publishing step
               connections.put(c.getInputSocket(), tOutput);
-            }
+            //}
           }
         }
       }
@@ -120,7 +122,15 @@ public class TPipeline {
             }
           }
         } else {
-          tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
+          if ("String".equals(type))
+          {
+            // If the type is "String" no special processing, just pass along the string as the value
+            tInput = createInput(type, name, input.getValue().get().toString());
+          }
+          else {
+            // More complex 'values' use TemplateMethods.parseSocketValue
+            tInput = createInput(type, name, TemplateMethods.parseSocketValue(input));
+          }
         }
         tStep.addInput(tInput);
       }

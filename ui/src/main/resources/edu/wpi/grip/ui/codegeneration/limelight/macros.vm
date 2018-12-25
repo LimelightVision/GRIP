@@ -49,12 +49,16 @@ $name(#foreach($inp in $step.getInputs())#param($inp $names[$count])#set($count 
 
 #macro (newInput $input)
 #if ($input.value().toLowerCase().contains("source") || $input.value().toLowerCase().contains("output"))
-	#cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
+    #cType($input.type()) ${tMeth.name($input.name())} = $tMeth.name($input.value());
 #else
 #if ($input.value().equals(""))
-	#cType($input.type()) ${tMeth.name($input.name())};
+    #cType($input.type()) ${tMeth.name($input.name())};
 #else
-	#cType($input.type()) ${tMeth.name($input.name())} = #cvVal($input.value());
+#if ($input.type().equals("String"))
+    #cType($input.type()) ${tMeth.name($input.name())} = "#cvVal($input.value())";
+#else
+    #cType($input.type()) ${tMeth.name($input.name())} = #cvVal($input.value());
+#end
 #end
 #end#end
 
